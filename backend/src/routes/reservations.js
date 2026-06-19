@@ -22,7 +22,6 @@ router.post("/", (req, res) => {
   const reservationId = generateId();
   let totalAmount = 0;
 
-  // Calculate total and validate products
   const itemRecords = [];
   for (const item of items) {
     const product = db.prepare("SELECT * FROM products WHERE id = ? AND is_available = 1").get(item.product_id);
@@ -84,6 +83,67 @@ router.post("/", (req, res) => {
   res.status(201).json({ ...reservation, items: reservationItems });
 });
 
+// PUT /api/reservations/:id/status - Update reservation status
+router.put("/:id/status", (req, res) => {
+  const db = getDb();
+  const { status } = req.body;
+  const validStatuses = ["pending", "confirmed", "ready", "picked_up", "cancelled"];
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` });
+  }
+
+  const reservation = db.prepare("SELECT * FROM reservations WHERE id = ?").get(req.params.id);
+  if (!reservation) {
+    return res.status(404).json({ error: "Reservation not found" });
+  }
+
+  db.prepare("UPDATE reservations SET status = ? WHERE id = ?").run(status, req.params.id);
+  const updated = db.prepare("SELECT * FROM reservations WHERE id = ?").get(req.params.id);
+
+  res.json(updated);
+});
+
+// GET /api/reservations/farm/:farmId - Get reservations for a specific farm
+router.get("/farm/:farmId", (req, res) => {
+  const db = getDb();
+  const { farmId } = req.params;
+  const { status } = req.query;
+
+  let sql = `
+    SELECT DISTINCT r.* FROM reservations r
+    JOIN reservation_items ri ON ri.reservation_id = r.id
+    JOIN products p ON ri.product_id = p.id
+    WHERE p.farm_id = ?
+  `;
+  const params = [farmId];
+
+  if (status) {
+    sql += " AND r.status = ?";
+    params.push(status);
+  }
+
+  sql += " ORDER BY r.created_at DESC";
+
+  const reservations = db.prepare(sql).all(...params);
+
+  // Attach items
+  const result = reservations.map((r) => {
+    const items = db
+      .prepare(`
+        SELECT ri.*, p.name as product_name, p.farm_id, f.name as farm_name
+        FROM reservation_items ri
+        JOIN products p ON ri.product_id = p.id
+        JOIN farms f ON p.farm_id = f.id
+        WHERE ri.reservation_id = ?
+      `)
+      .all(r.id);
+    return { ...r, items };
+  });
+
+  res.json(result);
+});
+
 // GET /api/reservations/:id - Get a reservation by ID
 router.get("/:id", (req, res) => {
   const db = getDb();
@@ -118,7 +178,6 @@ router.get("/", (req, res) => {
     .prepare("SELECT * FROM reservations WHERE shopper_email = ? ORDER BY created_at DESC")
     .all(email);
 
-  // Attach items to each reservation
   const result = reservations.map((r) => {
     const items = db
       .prepare(
