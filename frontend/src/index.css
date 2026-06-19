@@ -1,1 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-brand-cream: #FDFBF7;
+  --color-brand-forest: #14532D;
+  --color-brand-sage: #16A34A;
+  --color-brand-sprout: #F0FDF4;
+  --color-brand-honey: #D97706;
+  --color-brand-sunshine: #FFFBEB;
+  --color-brand-terracotta: #C2410C;
+  --color-brand-bark: #1C1917;
+
+  --font-serif: "Lora", "Georgia", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* Custom global styles to make the app incredibly polished */
+body {
+  background-color: var(--color-brand-cream);
+  font-family: var(--font-sans);
+  color: var(--color-brand-bark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Smooth transition for hover effects */
+.hover-card-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
