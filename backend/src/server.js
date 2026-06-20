@@ -19,6 +19,8 @@ seed();
 app.use("/api/farms", require("./routes/farms"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/reservations", require("./routes/reservations"));
+app.use("/api/producer", require("./routes/producer"));
+app.use("/api/pickup", require("./routes/pickup"));
 
 // Health check
 app.get("/api/health", (req, res) => {

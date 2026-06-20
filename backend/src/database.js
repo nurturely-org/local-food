@@ -31,6 +31,7 @@ function initSchema() {
       website TEXT,
       pickup_info TEXT,
       image_url TEXT,
+      payment_details TEXT,
       subscription_tier TEXT DEFAULT 'starter',
       active INTEGER DEFAULT 1,
       created_at TEXT DEFAULT (datetime('now'))

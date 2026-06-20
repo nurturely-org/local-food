@@ -39,6 +39,7 @@ function seed() {
       pickup_info:
         "Farm stand open Tues, Thurs, Sat 9am-5pm. Pre-orders picked up at the red barn.",
       image_url: "/images/bonz-beach.jpg",
+      payment_details: "Venmo: @BonzBeachFarms",
       subscription_tier: "premium",
     },
     {
@@ -57,6 +58,7 @@ function seed() {
       pickup_info:
         "Pickup at the homestead barn Wed & Fri 3-6pm. Please bring your own bags.",
       image_url: "/images/johnson-homestead.jpg",
+      payment_details: "Venmo: @JohnsonHomestead",
       subscription_tier: "starter",
     },
     {
@@ -75,6 +77,7 @@ function seed() {
       pickup_info:
         "Available at the Onaway Farmers Market (Sat 8am-1pm) or by appointment at the apiary.",
       image_url: "/images/north-woods-apiary.jpg",
+      payment_details: "Venmo: @NorthWoodsApiary",
       subscription_tier: "premium",
     },
     {
@@ -93,6 +96,7 @@ function seed() {
       pickup_info:
         "Farmstand open daily dawn-dusk (self-serve). Pre-orders available for weekend pickup.",
       image_url: "/images/posen-potato.jpg",
+      payment_details: "Venmo: @PosenPotato",
       subscription_tier: "starter",
     },
     {
@@ -111,13 +115,14 @@ function seed() {
       pickup_info:
         "U-pick season June-Sept. Pre-ordered berries available for pickup at the farm store 10am-5pm daily.",
       image_url: "/images/lake-esau.jpg",
+      payment_details: "Venmo: @LakeEsauBerry",
       subscription_tier: "premium",
     },
   ];
 
   const insertFarm = db.prepare(`
-    INSERT INTO farms (id, name, description, address, city, state, zip, county, phone, email, website, pickup_info, image_url, subscription_tier)
-    VALUES (@id, @name, @description, @address, @city, @state, @zip, @county, @phone, @email, @website, @pickup_info, @image_url, @subscription_tier)
+    INSERT INTO farms (id, name, description, address, city, state, zip, county, phone, email, website, pickup_info, image_url, payment_details, subscription_tier)
+    VALUES (@id, @name, @description, @address, @city, @state, @zip, @county, @phone, @email, @website, @pickup_info, @image_url, @payment_details, @subscription_tier)
   `);
 
   for (const farm of farms) {
